@@ -1,28 +1,26 @@
 var express = require('express');
 var app = express();
+var mongojs = require('mongojs');
+var db = mongojs('contaclist',['contaclist']);
+var bodyParser = require('body-parser');
 
 app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/assets"));
+app.use(bodyParser.json());
+
 
 app.get('/contactlist', function(req,res){
 	console.log('saya mendapatkan request')
-	person1 = {
-    	no : "1",
-    	nama : "abdul",
-    	pelatihan : "pelatihan1"
-    }
-    person2 = {
-    	no : "2",
-    	nama : "jabar",
-    	pelatihan : "pelatihan2"
-    }
-    person3 = {
-    	no : "3",
-    	nama : "hakim",
-    	pelatihan : "pelatihan3"
-    }
+	db.contaclist.find(function(err,docs){
+        res.json(docs);
+    });
+})
 
-    var contactlist = [person1,person2,person3];
-    res.json(contactlist);
+app.post('/contactlist', function(req,res){
+    console.log(req.body);
+    db.contaclist.insert(req.body,function(err,doc){
+        res.json(doc)
+    })
 })
 
 app.listen(3000);
